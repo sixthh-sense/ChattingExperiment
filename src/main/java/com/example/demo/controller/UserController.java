@@ -17,6 +17,7 @@ public class UserController {
     private final UserService userService;
 
     // 카카오 로그인
+    // https://kauth.kakao.com/oauth/authorize?client_id=5d14d9239c0dbefee951a1093845427f&redirect_uri=http://localhost:8080/user/kakao/callback&response_type=code
     @GetMapping("/user/kakao/callback")
     public UserResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         // 카카오 서버로부터 받은 인가 코드, JWT 토큰

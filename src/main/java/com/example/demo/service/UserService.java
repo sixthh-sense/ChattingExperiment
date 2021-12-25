@@ -236,4 +236,8 @@ public class UserService {
         // DB 저장
         userRepository.save(findUser);
     }
+
+//    public User getUser(Long senderId) { // #1 여기서 senderId를 못 받아옴. 왜??
+//        return userRepository.findById(senderId).orElseThrow(() -> new IllegalArgumentException("회원이 아닙니다."));
+//    }
 }

@@ -34,6 +34,11 @@ public class JwtTokenUtils {
             System.out.println(e.getMessage());
         }
 
+//        System.out.println(userDetails.getUser()); // com.example.demo.model.User@7f061a0c
+//        System.out.println(userDetails.getUsername()); // jeranum8@kakao.com
+//        System.out.println(userDetails.getAuthorities()); // []
+        System.out.println(token);
+
         return token;
     }
 
