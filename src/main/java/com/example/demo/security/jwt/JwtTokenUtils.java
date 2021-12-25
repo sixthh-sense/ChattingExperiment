@@ -25,7 +25,7 @@ public class JwtTokenUtils {
         String token = null;
         try {
             token = JWT.create()
-                    .withIssuer("sparta")
+                    .withIssuer("sparta") // 여기에서 issuer가 sparta 정말 맞나?
                     .withClaim(CLAIM_USER_NAME, userDetails.getUsername())
                     // 토큰 만료 일시 = 현재 시간 + 토큰 유효기간)
                     .withClaim(CLAIM_EXPIRED_DATE, new Date(System.currentTimeMillis() + JWT_TOKEN_VALID_MILLI_SEC))

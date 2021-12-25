@@ -41,4 +41,10 @@ public class JWTAuthProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return JwtPreProcessingToken.class.isAssignableFrom(authentication);
     }
+
+    // JwtTokenProvider의 public boolean validateToken을 참고한 것.
+    public boolean validateToken(Authentication authentication) {
+        return this.authenticate(authentication) != null;
+    }
+
 }

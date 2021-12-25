@@ -1,7 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ChatRoom;
-import com.example.demo.repository.ChatRepository;
+import com.example.demo.model.User;
+import com.example.demo.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class ChatRoomService {
 
     //private Map<String, ChatRoom> chatRoomMap;
-    private final ChatRepository chatRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
 //    @PostConstruct
 //    private void init() {
@@ -24,13 +25,13 @@ public class ChatRoomService {
     public List<ChatRoom> findAllRoom() {
         // 채팅방 생성순서 최근 순으로 반환
         List<ChatRoom> chatRooms;
-        chatRooms = chatRepository.findAll();
+        chatRooms = chatRoomRepository.findAll();
         Collections.reverse(chatRooms);
         return chatRooms;
     }
 
     public ChatRoom findRoomById(String id) {
-        return chatRepository.findByRoomId(id);
+        return chatRoomRepository.findByRoomId(id);
     }
 
     public ChatRoom createChatRoom(String name) {
@@ -38,8 +39,20 @@ public class ChatRoomService {
                 .roomId(UUID.randomUUID().toString())
                 .name(name)
                 .build();
-        chatRepository.save(chatRoom);
+        chatRoomRepository.save(chatRoom);
         //chatRoomMap.put(chatRoom.getRoomId(), chatRoom);
         return chatRoom;
+    }
+
+    public void setUserEnterInfo(String sessionId, String roomId, Long userId) {
+    }
+
+    public String getUserEnterRoomId(String sessionId) {
+    }
+
+    public User chkSessionUser(String sessionId) {
+    }
+
+    public void removeUserEnterInfo(String sessionId) {
     }
 }

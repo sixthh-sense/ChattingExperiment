@@ -44,6 +44,10 @@ public class JwtAuthFilter extends AbstractAuthenticationProcessingFilter {
 
         JwtPreProcessingToken jwtToken = new JwtPreProcessingToken(
                 extractor.extract(tokenPayload, request));
+        /*
+         * - Token 값이 존재하는 경우 -
+         * "Bearer" 부분만 제거 후 token 값 반환
+         */
 
         return super
                 .getAuthenticationManager()

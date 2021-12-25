@@ -65,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-                // 어떤 요청이든 허용
+                // 어떤 요청이든 허용 -> 컨트롤러 & 이미지파일 & 웹소켓 접근 허용할 것. /v2/**, /chat 어쩌고/**, /pub/**, /sub/**
                 .anyRequest().permitAll()
 //                .and()
 //                // [로그인 기능]
