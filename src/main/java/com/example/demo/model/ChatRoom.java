@@ -33,8 +33,8 @@ public class ChatRoom {
 //    @JoinColumn(name = "chat_room_user")
 //    private List<User> user = new ArrayList<>();
 
-    @Column
-    private Long userCount = 0L; // 채팅방 인원수
+//    @Column
+//    private Long userCount = 0L; // 채팅방 인원수
 
 //   public static ChatRoom create(String name) {
 //        ChatRoom chatRoom = new ChatRoom();

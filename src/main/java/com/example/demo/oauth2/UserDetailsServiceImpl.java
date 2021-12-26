@@ -1,6 +1,7 @@
-package com.example.demo.security;
+package com.example.demo.oauth2;
 
 import com.example.demo.model.User;
+import com.example.demo.oauth2.UserDetailsImpl;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

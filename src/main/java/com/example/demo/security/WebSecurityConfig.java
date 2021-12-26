@@ -1,124 +1,70 @@
 package com.example.demo.security;
 
-import com.example.demo.security.filter.JwtAuthFilter;
-import com.example.demo.security.jwt.HeaderTokenExtractor;
-import com.example.demo.security.provider.JWTAuthProvider;
+import com.example.demo.oauth2.JwtAuthenticationFilter;
+import com.example.demo.oauth2.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JWTAuthProvider jwtAuthProvider;
-    private final HeaderTokenExtractor headerTokenExtractor;
 
+    private final JwtTokenProvider jwtTokenProvider;
+
+    //패스워드암호화
     @Bean
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) {
-        // CustomAuthenticationProvider()를 호출하기 위해서 Overriding
-        auth
-                .authenticationProvider(jwtAuthProvider);
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
-        web
-                .ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/**");
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-
-        // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
-        http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        /*
-         * 1.
-         * UsernamePasswordAuthenticationFilter 이전에 JwtFilter 를 등록합니다.
-         * JwtFilter       : 서버에 접근시 JWT 확인 후 인증을 실시합니다.
-         */
-        http
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http.authorizeRequests()
-                // 어떤 요청이든 허용
-                .anyRequest().permitAll()
-//                .and()
-//                // [로그인 기능]
-//                .formLogin()
-//                // 로그인 View 제공 (GET /user/login)
-//                .loginPage("/user/login")
-//                // 로그인 처리 (POST /user/login)
-//                .loginProcessingUrl("/user/login")
-//                // 로그인 처리 후 성공 시 URL
-//                .defaultSuccessUrl("/")
-//                // 로그인 처리 후 실패 시 URL
-//                .failureUrl("/user/login?error")
-//                .permitAll()
-                .and()
-                // [로그아웃 기능]
-                .logout()
-                // 로그아웃 요청 처리 URL
-                .logoutUrl("/user/logout")
-                .permitAll()
-                .and()
-                .exceptionHandling();
-    }
-
-    private JwtAuthFilter jwtFilter() throws Exception {
-        List<String> skipPathList = new ArrayList<>();
-
-        // h2-console 허용
-        skipPathList.add("GET,/h2-console/**");
-        skipPathList.add("POST,/h2-console/**");
-
-        skipPathList.add("GET,/api/chat/**");
-        skipPathList.add("POST,/api/chat/**");
-        // 회원 관리 API 허용
-        skipPathList.add("GET,/user/**");
-        //skipPathList.add("GET,/**");
-
-        FilterSkipMatcher matcher = new FilterSkipMatcher(
-                skipPathList,
-                "/**"
-        );
-
-        JwtAuthFilter filter = new JwtAuthFilter(
-                matcher,
-                headerTokenExtractor
-        );
-        filter.setAuthenticationManager(super.authenticationManagerBean());
-
-        return filter;
     }
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
+        http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.headers().frameOptions().disable();
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                //컨트롤러 접근
+                .antMatchers("/**").permitAll()
+//                .antMatchers("/user/**").permitAll()
+//                .antMatchers("/api/profile/**").permitAll()
+//                .antMatchers("/api/profile").permitAll()
+//                .antMatchers(HttpMethod.GET,"/posts").permitAll()
+//                .antMatchers(HttpMethod.GET,"/posts/{postId}").permitAll()
+//                .antMatchers("/menu").permitAll()
+                .antMatchers("/").permitAll()
+//                .antMatchers("/favicon.ico").permitAll()
+//                //이미지파일 접근
+//                .antMatchers("/image/**").permitAll()
+//                //웹소켓 접근
+//                .antMatchers("/api/chat/**").permitAll()
+//                .antMatchers("/sub/**").permitAll()
+//                .antMatchers("/pub/**").permitAll()
+////                .antMatchers("/swagger-ui/**").permitAll()
+////                .antMatchers("/swagger-resources/**").permitAll()
+//                .antMatchers("/v2/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
     }
 }

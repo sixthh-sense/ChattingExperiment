@@ -1,4 +1,4 @@
-package com.example.demo.security;
+package com.example.demo.oauth2;
 
 import com.example.demo.model.User;
 import lombok.RequiredArgsConstructor;
