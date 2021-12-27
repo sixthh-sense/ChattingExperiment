@@ -20,7 +20,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "bookbooksecretkey";
+    private String secretKey = "123456bookmbtibookmbtisecretkey123456";
 
 //    @Value("${spring.datasource.secretKey}")
 //    private String secretKey;

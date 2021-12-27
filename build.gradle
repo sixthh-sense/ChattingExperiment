@@ -1,8 +1,7 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.3' // 2.6.1 version으로 바꾸면 querydsl에서 error가 일어남. plugin 형태를 바꾸라는데 뭔 소린지 모르겠음
+    id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'com.sparta'
@@ -27,72 +26,47 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-
 
     // JSON In Java
     implementation group: 'org.json', name: 'json', version: '20160810'
-    //implementation 'org.json:json:20210307'
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    // Swagger 추가
-//    implementation "io.springfox:springfox-boot-starter:3.0.0"
-//    implementation "io.springfox:springfox-swagger-ui:3.0.0"
-    //스프링 시큐리티
+
+    // 스프링 시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    // Validation
+
+    //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    //여기부터 웹소켓 테스트
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'commons-codec:commons-codec:1.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'com.auth0:java-jwt:3.13.0'
 
-    //스프링 웹소켓
+    // thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    //websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:sockjs-client:1.1.2'
     implementation 'org.webjars:stomp-websocket:2.3.3-1'
+
+    //View
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.webjars.bower:bootstrap:4.3.1'
+    implementation 'org.webjars.bower:vue:2.5.16'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'org.webjars.bower:axios:0.17.1'
+
     //스프링 redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //embedded redis
     implementation 'it.ozimov:embedded-redis:0.7.2'
-    implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'javax.xml.bind:jaxb-api'
-
-    implementation 'org.webjars.bower:bootstrap:4.3.1'
-    implementation 'org.webjars.bower:vue:2.5.16'
-    implementation 'org.webjars.bower:axios:0.17.1'
-    implementation 'org.webjars:sockjs-client:1.1.2'
-    implementation 'org.webjars:stomp-websocket:2.3.3-1'
-
-    //querydsl
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'com.querydsl:querydsl-jpa'
-    implementation 'com.querydsl:querydsl-apt'
-
-    // thymeleaf
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.1'
-
-
 }
+
 
 test {
     useJUnitPlatform()
-}
-
-def querydslSrcDir = "$buildDir/generated/querydsl"
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslSrcDir
-}
-
-sourceSets {
-    main.java.srcDirs querydslSrcDir
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl{
-    delete(querydslSrcDir)
-    options.annotationProcessorPath = configurations.querydsl
 }
