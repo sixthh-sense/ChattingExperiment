@@ -1,6 +1,5 @@
-package com.example.demo.oauth2;
+package com.example.demo.jwt;
 
-import com.example.demo.oauth2.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

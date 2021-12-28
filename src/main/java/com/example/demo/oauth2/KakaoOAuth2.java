@@ -1,6 +1,6 @@
 package com.example.demo.oauth2;
 
-import com.example.demo.oauth2.provider.KakaoUserInfoDto;
+import com.example.demo.dto.KakaoUserInfoDto;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

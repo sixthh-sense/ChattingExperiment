@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.HeaderDto;
 import com.example.demo.oauth2.KakaoOAuth2;
-import com.example.demo.oauth2.provider.JwtTokenProvider;
-import com.example.demo.oauth2.provider.KakaoUserInfoDto;
+import com.example.demo.jwt.JwtTokenProvider;
+import com.example.demo.dto.KakaoUserInfoDto;
 import com.example.demo.dto.UserRequestDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;

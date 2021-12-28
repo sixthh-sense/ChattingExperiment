@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import com.example.demo.oauth2.provider.KakaoUserInfoDto;
+import com.example.demo.dto.KakaoUserInfoDto;
 import com.example.demo.dto.UserRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

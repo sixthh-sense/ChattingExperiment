@@ -1,7 +1,7 @@
 package com.example.demo.security;
 
-import com.example.demo.oauth2.JwtAuthenticationFilter;
-import com.example.demo.oauth2.provider.JwtTokenProvider;
+import com.example.demo.jwt.JwtAuthenticationFilter;
+import com.example.demo.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                //이미지파일 접근
 //                .antMatchers("/image/**").permitAll()
 //                //웹소켓 접근
-//                .antMatchers("/api/chat/**").permitAll()
+//                .antMatchers("/chat/**").permitAll()
 //                .antMatchers("/sub/**").permitAll()
 //                .antMatchers("/pub/**").permitAll()
 ////                .antMatchers("/swagger-ui/**").permitAll()

@@ -1,4 +1,4 @@
-package com.example.demo.oauth2.provider;
+package com.example.demo.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

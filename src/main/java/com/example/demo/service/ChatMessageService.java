@@ -22,7 +22,7 @@ public class ChatMessageService {
 //            chatMessage.setMessage(chatMessage.getSender().getUsername() + "님이 나가셨습니다.");
 //            chatMessage.setSender(chatMessage.getSender());
 //        }
-//        messagingTemplate.convertAndSend("/sub/api/chat/room/" + chatMessage.getRoomId(), chatMessage);
+//        messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
 //    }
 
 //    public String getRoomId(String orElse) {
