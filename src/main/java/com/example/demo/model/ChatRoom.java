@@ -1,45 +1,48 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.bookbook.bookback.domain.dto.ChatRoomDto;
+import com.example.demo.dto.ChatRoomDto;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
 @Entity
-public class ChatRoom {
-    // redis에 저장되는 객체들은 Serialize가 가능해야 함. 그때는 implements Serializable 추가해야.
+public class ChatRoom implements Serializable { // redis에 저장되는 객체들은 Serialize가 가능해야 함, -> Serializable 참조
 
-    // private static final long serialVersionUID = 6494678977089006639L; 숫자는 임의의 숫자로 해도 괜찮은 듯.
-    // 참고 링크: https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=kkson50&logNo=220564273220
+    private static final long serialVersionUID = 6494678977089006639L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column
-    private String roomId; // auto-generate
+    private String roomId;
 
     @Column
-    private String name; // "채팅방의" 제목
+    private String roomName;
 
-//    @ManyToMany
-//    @JoinColumn(name = "chat_room_user")
-//    private List<User> user = new ArrayList<>();
+    @ManyToMany
+    @JoinColumn(name = "chat_room_user")
+    private List<User> user = new ArrayList<>();
 
-//    @Column
-//    private Long userCount = 0L; // 채팅방 인원수
+    @Column
+    private String image;
 
-//   public static ChatRoom create(String name) {
-//        ChatRoom chatRoom = new ChatRoom();
-//        chatRoom.roomId = UUID.randomUUID().toString();
-//        chatRoom.name = name;
-//        return chatRoom;
-//    }
+    @Column
+    private Long userCount=0L;// 채팅방 인원수
+
+    public static ChatRoom create(ChatRoomDto chatRoomDto) {
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.roomId = chatRoomDto.getRoomId();
+        chatRoom.roomName = chatRoomDto.getRoomName();
+        chatRoom.image = chatRoomDto.getImage();
+        return chatRoom;
+    }
 }

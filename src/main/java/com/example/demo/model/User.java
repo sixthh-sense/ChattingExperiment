@@ -2,15 +2,12 @@ package com.example.demo.model;
 
 import com.example.demo.dto.KakaoUserInfoDto;
 import com.example.demo.dto.UserRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Builder
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,7 +21,7 @@ public class User {
     private Long kakaoId;                       // 카카오 ID (카카오 기본키)
 
     @Column(nullable = false, unique = true)
-    private String username;                    // 카카오 아이디 (이메일)
+    private String email;                    // 카카오 아이디 (이메일)
 
     @Column(nullable = false)
     private String password;                    // 카카오 비밀번호
@@ -69,5 +66,9 @@ public class User {
         this.location = userRequestDto.getLocation();
         this.interest = userRequestDto.getInterest();
         this.mbti = userRequestDto.getMbti();
+    }
+
+    public String getUsername() {
+        return email;
     }
 }
