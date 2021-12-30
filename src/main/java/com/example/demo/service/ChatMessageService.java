@@ -1,30 +1,35 @@
 package com.example.demo.service;
 
 import com.example.demo.model.ChatMessage;
+import com.example.demo.model.User;
+import com.example.demo.repository.ChatMessageRepository;
+import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
-    private final SimpMessageSendingOperations messagingTemplate;
+    private final ChannelTopic channelTopic;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final UserRepository userRepository;
 
-    // 메세지 type을 확인한 뒤 그에 따라 작업 분기
-//    public void sendChatMessage(ChatMessage chatMessage) {
-//        //채팅방 입장
-//        if (ChatMessage.MessageType.ENTER.equals(chatMessage.getType())) {
-//            chatMessage.setMessage("MBTI가 " + chatMessage.getSender().getMbti() + "인 " + chatMessage.getSender().getNickname() + "님이 입장하셨습니다.");
-//            chatMessage.setSender(chatMessage.getSender());
-//            // 채팅방 퇴장시
-//        } else if (ChatMessage.MessageType.LEAVE.equals(chatMessage.getType())) {
-//            chatMessage.setMessage(chatMessage.getSender().getUsername() + "님이 나가셨습니다.");
-//            chatMessage.setSender(chatMessage.getSender());
-//        }
-//        messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessage.getRoomId(), chatMessage);
-//    }
+    @Transactional // 메세지의 type 을 확인하고 그에따라 작업을 분기시킴
+    public void sendChatMessage(ChatMessage message) {
+        // 자료형을 ChatMessage.class라고 controller에서 지정해줘서 입력변수 자료형이 ChatMessage로 바뀜
 
-//    public String getRoomId(String orElse) {
-//    }
+        User user = userRepository.findById(message.getSenderId()).orElseThrow(
+                ()-> new IllegalArgumentException("(채팅방) 유저인덱스를 찾을 수 없습니다")
+        );
+
+        if (ChatMessage.MessageType.TALK.equals(message.getType())) {
+            System.out.println("채팅 TALK 들어옴");
+            redisTemplate.convertAndSend(channelTopic.getTopic(), message);
+        }
+    }
+
 }

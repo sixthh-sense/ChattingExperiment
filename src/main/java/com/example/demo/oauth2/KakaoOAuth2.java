@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,11 +36,13 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI
+        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI(BE local test)
         body.add("code", authorizedCode);
 
         // HTTP 요청 보내기
         RestTemplate rt = new RestTemplate();
+        // baseballmate를 보고 추가한 부분. 무슨 의미인지 궁금.
+        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
 
@@ -57,16 +60,21 @@ public class KakaoOAuth2 {
     }
 
     private KakaoUserInfoDto getUserInfoByToken(String accessToken) {
-        // HTTP Header 생성
+        // HTTP Header object 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);      // JWT 토큰
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        // HTTP 요청 보내기  // HttpHeader와 HttpBody를 하나의 오브젝트에 담기?
         RestTemplate rt = new RestTemplate();
+        // baseballmate보고 추가한 부분
+        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+
+
         ResponseEntity<String> response = rt.exchange(
-                "https://kapi.kakao.com/v2/user/me",
+                "https://kapi.kakao.com/v2/user/me", // "https://kauth.kakao.com/oauth/token",
                 HttpMethod.POST,
                 kakaoUserInfoRequest,
                 String.class
@@ -115,17 +123,13 @@ public class KakaoOAuth2 {
         if (!body.getJSONObject("kakao_account").getBoolean("age_range_needs_agreement")) {
             ageRange = body.getJSONObject("kakao_account").getString("age_range");
         }
-
-//        return KakaoUserInfoDto.builder() // 이 부분은 그대로 놔둬도 될 듯?
-//                .id(id)
-//                .username(username)
-//                .nickname(nickname)
-//                .profileImage(profileImage)
-//                .gender(gender)
-//                .ageRange(ageRange)
-//                .build();
-
-        return new KakaoUserInfoDto(id, username, nickname, profileImage, gender, ageRange);
+        return new KakaoUserInfoDto(
+                id,
+                username,
+                nickname,
+                profileImage,
+                gender,
+                ageRange);
     }
 
 

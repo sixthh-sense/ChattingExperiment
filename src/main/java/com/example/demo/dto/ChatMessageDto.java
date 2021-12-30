@@ -1,11 +1,17 @@
 package com.example.demo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
-public class ChatMessageDto {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ChatMessageDto implements Serializable {
+
+    private static final long serialVersionUID = 6494678977089006639L;
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
         ENTER, TALK

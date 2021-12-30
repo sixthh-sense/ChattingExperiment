@@ -1,14 +1,9 @@
 package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Builder
-@Data
 @AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class KakaoUserInfoDto {
     private Long id;                    // 카카오 ID (카카오 기본키)
     private String username;            // 카카오 아이디 (이메일)

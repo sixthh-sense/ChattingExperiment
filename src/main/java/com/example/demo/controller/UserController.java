@@ -30,8 +30,9 @@ public class UserController {
     // 카카오 로그인
     @GetMapping("/user/kakao/callback")
     @ResponseBody
-    public HeaderDto kakaoLogin(@RequestParam(value = "code") String code) {
-        return userService.kakaoLogin(code);
+    public String kakaoLogin(@RequestParam(value = "code") String code) {
+        userService.kakaoLogin(code);
+        return "redirect:/chat/room";
     }
 
 
