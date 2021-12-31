@@ -19,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")//cors를 적용할 URL패턴 정의
+                //.allowedOrigins("*") -> 얘를 안 하는 이유가 있었음. .allowedOrigins의"*"은 금지? 500 error
 //                .allowedOrigins("http://localhost:3000", "http://dabinweb.shop.s3-website.ap-northeast-2.amazonaws.com/")//자원 공유 허락할 Origin 허락
                 .allowedOriginPatterns("*")//자원 공유 허락할 Origin 허락
                 .allowedMethods("*")//허락할 HTTP method 지정

@@ -6,7 +6,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -42,7 +41,7 @@ public class KakaoOAuth2 {
         // HTTP 요청 보내기
         RestTemplate rt = new RestTemplate();
         // baseballmate를 보고 추가한 부분. 무슨 의미인지 궁금.
-        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        //rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
 
@@ -68,7 +67,7 @@ public class KakaoOAuth2 {
         // HTTP 요청 보내기  // HttpHeader와 HttpBody를 하나의 오브젝트에 담기?
         RestTemplate rt = new RestTemplate();
         // baseballmate보고 추가한 부분
-        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        //rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
 

@@ -6,7 +6,6 @@ import com.example.demo.model.User;
 import com.example.demo.service.ChatMessageService;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +26,7 @@ public class ChatMessageController {
         User sender =  userService.getUser(messageRequestDto.getSenderId());
         ChatMessage chatMessage = new ChatMessage(messageRequestDto, sender);
         chatMessageService.sendChatMessage(chatMessage);
+        System.out.println("메세지 송부 요청 완료");
     }
 
 }

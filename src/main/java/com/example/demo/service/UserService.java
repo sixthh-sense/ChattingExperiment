@@ -29,7 +29,7 @@ public class UserService {
     static boolean signStatus = false;      // 회원가입 상태
 
     //카카오 로그인
-    public void kakaoLogin(String authorizedCode) { // throws JsonProcessingException
+    public HeaderDto kakaoLogin(String authorizedCode) { // throws JsonProcessingException
 
         KakaoUserInfoDto userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
 
@@ -75,6 +75,8 @@ public class UserService {
         User member = userRepository.findByKakaoId(kakaoId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         headerDto.setTOKEN(jwtTokenProvider.createToken(username, member.getId(), member.getNickname()));
+
+        return headerDto;
     }
 
     // 추가 정보 입력
