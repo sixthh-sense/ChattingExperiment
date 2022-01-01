@@ -1,9 +1,8 @@
-package com.example.demo.security;
+package com.example.demo.config;
 
 import com.example.demo.handler.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-//import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -27,7 +26,7 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
                 .setAllowedOrigins("*")
-                .setAllowedOriginPatterns("*")// AllowedOriginPatterns와 AllowedOrigin은 무슨 차이가 있는 걸까? 아무튼 patterns가 좀더 융통성이 있는 듯하니 그쪽으로 go!
+                //.setAllowedOriginPatterns("*")// AllowedOriginPatterns와 AllowedOrigin은 무슨 차이가 있는 걸까? 아무튼 patterns가 좀더 융통성이 있는 듯하니 그쪽으로 go! *://*
                 .withSockJS();
     }
 

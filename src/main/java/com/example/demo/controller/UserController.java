@@ -20,6 +20,7 @@ public class UserController {
     // 카카오 로그인
     @GetMapping("/user/kakao/callback")
     public HeaderDto kakaoLogin(@RequestParam(value = "code") String code) {
+        System.out.println("UserController received: " + code);
        return userService.kakaoLogin(code);
     }
 

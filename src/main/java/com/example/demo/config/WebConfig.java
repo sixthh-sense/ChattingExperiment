@@ -14,8 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration//설정파일이라는 것을 알려줌
 public class WebConfig implements WebMvcConfigurer {
 
-
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")//cors를 적용할 URL패턴 정의

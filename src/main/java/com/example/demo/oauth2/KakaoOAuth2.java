@@ -2,6 +2,7 @@ package com.example.demo.oauth2;
 
 import com.example.demo.dto.KakaoUserInfoDto;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+// @ConfigurationProperties
 @Component
 public class KakaoOAuth2 {
     public KakaoUserInfoDto getUserInfo(String authorizedCode) {
@@ -20,11 +22,11 @@ public class KakaoOAuth2 {
         return getUserInfoByToken(accessToken);
     }
 
-//    @Value("${spring.datasource.client_id}")
-//    private String client_id;
-//
-//    @Value("${spring.datasource.redirect_uri}")
-//    private String redirect_uri;
+    @Value("${spring.datasource.client_id}")
+    private String client_id;
+
+    @Value("${spring.datasource.redirect_uri}")
+    private String redirect_uri;
 
     public String getAccessToken(String authorizedCode) {
         // HTTP Header object 생성
@@ -34,8 +36,8 @@ public class KakaoOAuth2 {
         // HTTP Body 생성 -> 오류 나서 다시 시도 body <-> params 둘 차이점은 대체 무엇? 별 차이 없나?
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "5d14d9239c0dbefee951a1093845427f");                  // 개발 REST API 키
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");      // 개발 Redirect URI(BE local test)
+        body.add("client_id", client_id);                  // 개발 REST API 키
+        body.add("redirect_uri", redirect_uri);      // 개발 Redirect URI(BE local test)
         body.add("code", authorizedCode);
 
         // HTTP 요청 보내기

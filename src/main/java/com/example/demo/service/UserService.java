@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -30,10 +32,14 @@ public class UserService {
 
     //카카오 로그인
     public HeaderDto kakaoLogin(String authorizedCode) { // throws JsonProcessingException
+        System.out.println("authorizedCode: " + authorizedCode);
 
         KakaoUserInfoDto userInfo = kakaoOAuth2.getUserInfo(authorizedCode);
+        System.out.println("KakaoUserInfoDto: " + userInfo);
 
         Long kakaoId = userInfo.getId();
+        System.out.println("KakaoId: " + kakaoId);
+
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
 
@@ -42,6 +48,9 @@ public class UserService {
         String password = UUID.randomUUID().toString();                 // 카카오 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
         String nickname = userInfo.getNickname();                  // 카카오 닉네임
+
+        System.out.println("KakaoUsername: " + username);
+        System.out.println("KakaoNickname: " + nickname);
 
         // nullable = true
         String profileImage = userInfo.getProfileImage();          // 카카오 프로필 이미지
@@ -75,6 +84,8 @@ public class UserService {
         User member = userRepository.findByKakaoId(kakaoId).orElseThrow(()
                 -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         headerDto.setTOKEN(jwtTokenProvider.createToken(username, member.getId(), member.getNickname()));
+
+        System.out.println("jwtTokenProvider token(email, id, nickname): " + jwtTokenProvider.createToken(username, member.getId(), member.getNickname()));
 
         return headerDto;
     }

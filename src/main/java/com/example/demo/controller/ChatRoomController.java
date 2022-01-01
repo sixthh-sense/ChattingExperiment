@@ -29,7 +29,7 @@ public class ChatRoomController {
 
     // 채팅방 생성
     @PostMapping("/room")
-    public ChatRoomCreateResponseDto createRoom(@RequestParam String name, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ChatRoomCreateResponseDto createRoom(@RequestParam String name, @AuthenticationPrincipal UserDetailsImpl userDetails) { // @Header("token") String token
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
         return chatRoomService.createChatRoom(name, user);
     }

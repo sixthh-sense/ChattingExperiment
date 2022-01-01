@@ -20,7 +20,7 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "123456bookmbtibookmbtisecretkey123456";
+    private String secretKey = "jwt_secret_!@#$%"; // 123456bookmbtibookmbtisecretkey123456
     public static final String JWT_SECRET = "jwt_secret_!@#$%";
 
 //    @Value("${spring.datasource.secretKey}")
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-   // SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     // public static Algorithm HMAC256(String secret) throws IllegalArgumentException {
     //        return new HMACAlgorithm("HS256", "HmacSHA256", secret);
     //    }
