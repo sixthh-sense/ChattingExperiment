@@ -1,7 +1,6 @@
 package com.example.demo.config;
 
 import com.example.demo.pubsub.RedisSubscriber;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -12,9 +11,28 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@RequiredArgsConstructor
 @Configuration
 public class RedisConfig {
+    /**
+     * redis pub/sub 메시지를 처리하는 listener 설정
+     */
+    @Bean
+    public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        return container;
+    }
+    /**
+     * 어플리케이션에서 사용할 redisTemplate 설정
+     */
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        return redisTemplate;
+    }
 
     /**
      * 단일 Topic 사용을 위한 Bean 설정
@@ -38,22 +56,10 @@ public class RedisConfig {
     }
 
     /**
-     * 실제 메시지를 처리하는 subscriber 설정 추가. 메시지를 구독자에게 보내는 역할.
+     * 실제 메시지를 처리하는 subscriber 설정 추가
      */
     @Bean
     public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
         return new MessageListenerAdapter(subscriber, "sendMessage");
-    }
-
-    /**
-     * 어플리케이션에서 사용할 redisTemplate 설정
-     */
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(connectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
-        return redisTemplate;
     }
 }

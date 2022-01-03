@@ -1,99 +1,74 @@
 package com.example.demo.config;
 
-import com.example.demo.jwt.JwtAuthenticationFilter;
+import com.example.demo.jwt.FormLoginFilter;
+import com.example.demo.jwt.FormLoginSuccessHandler;
 import com.example.demo.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.CorsUtils;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@Configuration
+/**
+ * Web Security 설정
+ */
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    // UserService의 HttpHeaders 빈 등록
-    @Bean
-    public HttpHeaders headers(){
-        return new HttpHeaders();
-    }
-
-    //패스워드암호화
-    @Bean
-    public BCryptPasswordEncoder encodePassword() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    @Override // authenticationManager를 Bean 등록
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // cors설정 추가
         http
-                .cors()
-                .configurationSource(corsConfigurationSource());
-
-        http.csrf().disable(); // API 집중을 위해 CSRF 무시
-        http.httpBasic().disable(); //Http basic Auth 가 생성하는 로그인 창 막기
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);  // jwt token 사용
-
-        http.headers().frameOptions().sameOrigin();
-
-        http
-                .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/user/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/chat/**", "/","/**").permitAll()
-                .anyRequest().permitAll()
+                .csrf().disable() // 기본값이 on인 csrf 취약점 보안을 해제한다. on으로 설정해도 되나 설정할경우 웹페이지에서 추가처리가 필요함.
+                .headers()
+                .frameOptions().sameOrigin() // SockJS는 기본적으로 HTML iframe 요소를 통한 전송을 허용하지 않도록 설정되는데 해당 내용을 해제한다.
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .formLogin() // 권한없이 페이지 접근하면 로그인 페이지로 이동한다.
+                .and()
+
+                .authorizeRequests()
+                .antMatchers("/chat/**").hasRole("USER") // chat으로 시작하는 리소스에 대한 접근 권한 설정
+                .anyRequest().permitAll(); // 나머지 리소스에 대한 접근 설정
     }
+
+    /**
+     * 테스트를 위해 In-Memory에 계정을 임의로 생성한다.
+     * 서비스에 사용시에는 DB데이터를 이용하도록 수정이 필요하다.
+     */
     @Override
-    public void configure(WebSecurity web) {
-        // h2-console 사용에 대한 허용 (CSRF, FrameOptions 무시)
-        web
-                .ignoring()
-                .antMatchers("/h2-console/**")
-                .antMatchers("/webjars/**")
-                .antMatchers("/**")
-                .antMatchers("/chat/**");
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser("happydaddy")
+                .password("{noop}1234")
+                .roles("USER")
+                .and()
+                .withUser("angrydaddy")
+                .password("{noop}1234")
+                .roles("USER")
+                .and()
+                .withUser("guest")
+                .password("{noop}1234")
+                .roles("GUEST");
+    }
+
+
+    @Bean
+    public FormLoginFilter formLoginFilter() throws Exception {
+        FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
+        formLoginFilter.setFilterProcessesUrl("/api/user/signin");
+        formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.afterPropertiesSet();
+        return formLoginFilter;
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*"); // local 테스트 시 http://localhost:3000
-//        configuration.addAllowedOrigin("http://"); // 배포 주소
-//        configuration.addAllowedOrigin("http://"); // S3 주소
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.addExposedHeader("*");
+    public FormLoginSuccessHandler formLoginSuccessHandler() {
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        return new FormLoginSuccessHandler(jwtTokenProvider);
     }
-
 }

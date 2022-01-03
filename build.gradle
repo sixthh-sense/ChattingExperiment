@@ -1,10 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.1'
+    id 'org.springframework.boot' version '2.6.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
-group = 'com.sparta'
+group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
@@ -22,60 +22,39 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
-
-    // anotationProcessor(application.properties 관련)
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // JSON In Java
-    implementation group: 'org.json', name: 'json', version: '20160810'
-
-    // 스프링 시큐리티
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    //validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
-    // Oauth2
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.4.2'
-
-    //implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    implementation 'commons-codec:commons-codec:1.5'
-    //implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-   // implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-    implementation 'com.auth0:java-jwt:3.13.0'
-
-    // thymeleaf
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-    //websocket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.webjars:sockjs-client:1.1.2'
-    implementation 'org.webjars:stomp-websocket:2.3.3-1'
-
-    //View
+    // FrontEnd
     implementation 'org.springframework.boot:spring-boot-starter-freemarker'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.webjars.bower:bootstrap:4.3.1'
     implementation 'org.webjars.bower:vue:2.5.16'
-    implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'org.webjars.bower:axios:0.17.1'
 
-    //스프링 redis
+    // 웹소켓 & STOMP
+    implementation 'org.webjars:sockjs-client:1.1.2'
+    implementation 'org.webjars:stomp-websocket:2.3.3-1'
+
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // 얘는 정체가 좀 수상
+    implementation 'com.google.code.gson:gson:2.8.0'
+
+    // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    testImplementation 'it.ozimov:embedded-redis:0.7.2'
 
-    //embedded redis
-    implementation 'it.ozimov:embedded-redis:0.7.2'
     implementation 'javax.xml.bind:jaxb-api'
-}
 
+    // security & JWT
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+}
 
 test {
     useJUnitPlatform()

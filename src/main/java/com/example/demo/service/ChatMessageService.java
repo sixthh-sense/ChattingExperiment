@@ -1,45 +1,51 @@
 package com.example.demo.service;
 
-import com.example.demo.model.ChatMessage;
-import com.example.demo.model.User;
-import com.example.demo.repository.ChatMessageRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.model.ChatRoom;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
-@Service
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.*;
+
+@Slf4j
 @RequiredArgsConstructor
+@Service
 public class ChatMessageService {
 
-    private final ChannelTopic channelTopic;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final UserRepository userRepository;
+    private final ObjectMapper objectMapper;
+    private Map<String, ChatRoom> chatRooms;
 
-    @Transactional // 메세지의 type 을 확인하고 그에따라 작업을 분기시킴
-    public void sendChatMessage(ChatMessage message) {
-        // 자료형을 ChatMessage.class라고 controller에서 지정해줘서 입력변수 자료형이 ChatMessage로 바뀜
-
-        User user = userRepository.findById(message.getSenderId()).orElseThrow(
-                ()-> new IllegalArgumentException("(채팅방) 유저인덱스를 찾을 수 없습니다")
-        );
-
-        if (ChatMessage.MessageType.TALK.equals(message.getType())) {
-            System.out.println("채팅 TALK 들어옴");
-            redisTemplate.convertAndSend(channelTopic.getTopic(), message);
-        }
+    @PostConstruct
+    private void init() {
+        chatRooms = new LinkedHashMap<>();
     }
 
-    /**
-     * destination정보에서 roomId 추출
-     */
-    public String getRoomId(String destination) {
-        int lastIndex = destination.lastIndexOf('/');
-        if (lastIndex != -1) {
-            return destination.substring(lastIndex + 1);
-        } else
-            return "";
+    public List<ChatRoom> findAllRoom() {
+        return new ArrayList<>(chatRooms.values());
+    }
+
+    public ChatRoom findRoomById(String roomId) {
+        return chatRooms.get(roomId);
+    }
+
+    public ChatRoom createRoom(String name) {
+        String randomId = UUID.randomUUID().toString();
+        ChatRoom chatRoom = new ChatRoom(randomId, name);
+
+        chatRooms.put(randomId, chatRoom);
+        return chatRoom;
+    }
+
+    public <T> void sendMessage(WebSocketSession session, T message) {
+        try {
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }

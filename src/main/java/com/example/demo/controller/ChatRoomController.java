@@ -1,44 +1,65 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ChatRoomCreateResponseDto;
-import com.example.demo.dto.ChatRoomResponseDto;
+import com.example.demo.dto.LoginInfo;
+import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.ChatRoom;
-import com.example.demo.model.User;
-import com.example.demo.oauth2.UserDetailsImpl;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping("/chat")
 public class ChatRoomController {
-
     private final ChatRoomService chatRoomService;
-    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+
+
+    @GetMapping("/user")
+    @ResponseBody
+    public LoginInfo getUserInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName();
+        return LoginInfo.builder().name(name).token(jwtTokenProvider.generateToken(name)).build();
+    }
+
+    // 채팅 리스트 화면
+    @GetMapping("/room")
+    public String rooms(Model model) {
+        return "/room";
+    }
 
     // 모든 채팅방 목록 반환
     @GetMapping("/rooms")
-    public List<ChatRoomCreateResponseDto> room() {
+    @ResponseBody
+    public List<ChatRoom> room() {
         return chatRoomService.findAllRoom();
     }
 
     // 채팅방 생성
     @PostMapping("/room")
-    public ChatRoomCreateResponseDto createRoom(@RequestParam String name, @AuthenticationPrincipal UserDetailsImpl userDetails) { // @Header("token") String token
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다"));
-        return chatRoomService.createChatRoom(name, user);
+    @ResponseBody
+    public ChatRoom createRoom(@RequestParam String name) {
+        return chatRoomService.createChatRoom(name);
+    }
+
+    // 채팅방 입장 화면
+    @GetMapping("/room/enter/{roomId}")
+    public String roomDetail(Model model, @PathVariable String roomId) {
+        model.addAttribute("roomId", roomId);
+        return "/roomdetail";
     }
 
     // 특정 채팅방 조회
     @GetMapping("/room/{roomId}")
-    public ChatRoomResponseDto roomInfo(@PathVariable String roomId) {
+    @ResponseBody
+    public ChatRoom roomInfo(@PathVariable String roomId) {
         return chatRoomService.findRoomById(roomId);
     }
-
-    // 사용자별 채팅방 목록 조회
 }
