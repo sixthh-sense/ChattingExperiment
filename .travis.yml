@@ -36,8 +36,8 @@ before_deploy:
 # 외부 서비스와 연동할 행위들을 선언한다.
 deploy:
   - provider: s3
-    access_key_id: $AKIA2ZLBQDJIK56GV36O # Travis settings에 설정된 값
-    secret_access_key: $knYmZAQEzXk48oKe7H\+9iBvIjur8f\+E7P4CrBUbc # Travis settings에 설정된 값
+    access_key_id: AKIA2ZLBQDJIK56GV36O # Travis settings에 설정된 값
+    secret_access_key: knYmZAQEzXk48oKe7H\+9iBvIjur8f\+E7P4CrBUbc # Travis settings에 설정된 값
     bucket: S3버킷이름 # S3 버킷
     region: ap-northeast-2
     skip_cleanup: true
