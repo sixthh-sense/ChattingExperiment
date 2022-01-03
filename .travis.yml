@@ -45,7 +45,7 @@ deploy:
     local_dir: deploy # before_deploy에서 생성한 디렉토리로 이동한다. 해당 위치의 파일만 이동시킨다.
     wait-until-deployed: true
     on:
-      branch: main
+      branch: clone
 ## 새롭게 추가된 부분
 
 # CI 실행 완료 시 작성한 이메일로 알람
