@@ -44,7 +44,7 @@ jobs:
         
       # 압축파일 형태로 전달(traffic 아끼기?)
       - name: Wake zip file
-        run: zip -r -qq -j ./springboot-intro-build.zip ./deploy
+        run: zip -r -qq -j ./sixzombiesbucket.zip ./deploy
         
       # S3 Bucket으로 copy
       - name: Deliver to AWS S3
@@ -56,4 +56,4 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./springboot-intro-build.zip s3://springboot-intro-build/
+          ./sixzombiesbucket.zip s3://sixzombiesbucket/
